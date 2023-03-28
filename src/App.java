@@ -10,9 +10,7 @@ import java.util.Properties;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        // String url =
-        // "https://raw.githubusercontent.com/alura-cursos/imersao-java-2-api/main/TopMovies.json";
-        Properties prop = new Properties();
+        var prop = new Properties();
         FileInputStream file = new FileInputStream("./properties/conf.properties");
         prop.load(file);
         String url = prop.getProperty("url");
