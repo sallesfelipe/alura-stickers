@@ -1,3 +1,5 @@
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -21,10 +23,16 @@ public class GeradorDeFigurinhas {
       Graphics2D graphics = (Graphics2D) novaImagem.getGraphics();
       graphics.drawImage(imagemOriginal, 0, 0, null);
 
+      //escrever na imagem
+      var fonte = new Font(Font.SANS_SERIF, Font.BOLD, 72);
+      graphics.setFont(fonte);
+      graphics.setColor(Color.YELLOW);
+      graphics.drawString("TOPZERA", largura / 4, novaAltura - 100);
+
       //verificando se ja existe a pasta e criando caso nao exista
       var theDir = new File("saida");
       if (!theDir.exists()) {
-      theDir.mkdirs();
+        theDir.mkdirs();
       }
 
       //escrever a nova imagem em arquivo
