@@ -1,43 +1,34 @@
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 public class App {
+
     public static void main(String[] args) throws Exception {
-        var prop = new Properties();
-        FileInputStream file = new FileInputStream("./properties/conf.properties");
-        prop.load(file);
-        String url = prop.getProperty("url");
 
-        URI endereco = URI.create(url);
-        var client = HttpClient.newHttpClient();
-        var request = HttpRequest.newBuilder(endereco).GET().build();
-        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-        String body = response.body();
+        API api = API.IMDB_TOP_MOVIES;
 
-        var parser = new JsonParser();
-        List<Map<String, String>> listaDeFilmes = parser.parse(body);
+        String url = api.getUrl();
+        ExtratorDeConteudo extrator = api.getExtrator();
 
-        for (Map<String, String> filme : listaDeFilmes) {
+        var http = new ClienteHttp();
+        String json = http.buscaDados(url);
 
-            String urlImagem = filme.get("image");
-            String titulo = filme.get("title");
+        // exibir e manipular os dados
+        List<Conteudo> conteudos = extrator.extraiConteudos(json);
 
-            InputStream inputStream = new URL(urlImagem).openStream();
-            String nomeArquivo = "saida/" + titulo + ".png";
+        var geradora = new GeradoraDeFigurinhas();
 
-            var geradora = new GeradorDeFigurinhas();
+        for (int i = 0; i < 3; i++) {
+
+            Conteudo conteudo = conteudos.get(i);
+
+            InputStream inputStream = new URL(conteudo.urlImagem()).openStream();
+            String nomeArquivo = "saida/" + conteudo.titulo() + ".png";
+
             geradora.cria(inputStream, nomeArquivo);
 
-            System.out.println(titulo);
+            System.out.println(conteudo.titulo());
             System.out.println();
         }
     }
